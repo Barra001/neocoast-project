@@ -43,8 +43,11 @@ La variable `PORT` nunca se define. Primero hay que definirla con `const` para l
 * No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación de actualización con éxito igualmente darle una respuesta informativa al usuario.
 * La función `update` en el objeto `Post` no existe. Las opciones son `updateOne` o `updateMany`.
 
-# Sugerencias
-* Agregar un linter al proyecto
+## EsLint
+* El Proyecto no contaba con ningún linter para aplicar estilo al código y formatearlo automáticamente. Esto crea una base de código coherente y más legible.
+## Desacoplar base de datos
+* La base de datos se puede desacoplar de la lógica de la api express y ser llevada a su propio modulo de manera de separar responsabilidades y mantener un código mas cohesivo.
+## Log de errores (cambio no implementado)
+* En este momento los errores que da la API no se logean en ningún lado pero lo ideal es tener un sistema de logeo asíncrono en un servicio como NewRelic de manera de tener mayor visibilidad sobre lo que sucede con la API en todo momento.
+
 * agregar github actions
-* Desacoplar la base de datos de la api
-* log error details somewhere

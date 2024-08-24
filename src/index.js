@@ -1,23 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const { PostRepository, connectToDB } = require('./database');
 dotenv.config();
 
-async function runServer() {
-    console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB');
-    const Post = mongoose.model('Post', { title: String, body: String });
-
+async function createExpressApp(postRepository) {
     const app = express();
 
     app.use(express.json());
 
-    const PORT = process.env.API_PORT;
-
     app.get('/posts', async (_req, res) => {
         try {
-            const posts = await Post.find();
+            const posts = await postRepository.getPosts();
 
             res.status(200).json(posts);
         } catch {
@@ -33,7 +26,7 @@ async function runServer() {
         } = req.body;
 
         try {
-            const newPost = await Post.create({ title, body });
+            const newPost = await postRepository.createPost(title, body);
 
             res.status(201).json(newPost);
         } catch {
@@ -51,7 +44,7 @@ async function runServer() {
         } = req;
 
         try {
-            const deleteRequest = await Post.deleteOne({ _id });
+            const deleteRequest = await postRepository.deletePost(_id);
 
             if (deleteRequest.deletedCount === 0) {
                 return res.status(404).json({ message: "Post not found" });
@@ -72,7 +65,7 @@ async function runServer() {
         } = req;
 
         try {
-            const postWithId = await Post.find({ _id });
+            const postWithId = await postRepository.getPostById(_id);
 
             res.status(200).json(postWithId);
         } catch {
@@ -90,7 +83,7 @@ async function runServer() {
         } = req;
 
         try {
-            const newPost = await Post.updateOne({ _id }, { $set: { title, body } });
+            const newPost = await postRepository.updatePost(_id, title, body);
 
             if (newPost.modifiedCount === 0) {
                 return res.status(404).json({ message: "Post not found" });
@@ -105,6 +98,18 @@ async function runServer() {
 
     })
 
+    return app;
+}
+
+async function runServer() {
+    await connectToDB();
+
+    const postRepository = new PostRepository();
+
+    const PORT = process.env.API_PORT;
+
+    const app = await createExpressApp(postRepository);
+
     app.listen(PORT, () => {
         console.log('Listening on port', PORT);
     });
@@ -112,6 +117,10 @@ async function runServer() {
 }
 
 runServer();
+
+module.exports = {
+    createExpressApp,
+}
 
 
 
