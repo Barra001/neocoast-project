@@ -23,33 +23,34 @@ La variable "PRIVAVE_API_KEY" no se usa en ningún lado por lo tanto puede ser e
 La variable `PORT` nunca se define. Primero hay que definirla con `const` para luego poder utilizarla.
 
 ## GET endpoint
-* No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación con éxito igualmente darle una respuesta informativa al usuario.
+No se hace un `try` y `catch` para asegurarse de que en caso de no poder realizar la operación con éxito igualmente darle una respuesta informativa al usuario.
 
 ## "/create" endpoint
 * Utilizando el método `POST` se sobreentiende que se esta creando un nuevo objeto en la base de datos y por lo tanto `/create` puede ser eliminado de la ruta.
-* No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación de creación con éxito igualmente darle una respuesta informativa al usuario.
+* No se hace un `try` y `catch` para asegurarse de que en caso de no poder realizar la operación de creación con éxito igualmente darle una respuesta informativa al usuario.
 * La operación de crear una entidad es asincronía y debe terminar antes de enviarle al usuario su respuesta por eso hace falta un `await`.
 ## DELETE endpoint
 * Como convención se utiliza el método `DELETE` y no `POST` a la hora de borrar una entidad. Realizando este cambio se puede sacar `/delete` de la ruta ya que ya se sobre entiende gracias al método.
 * La función `delete` en el objeto `Post` no existe. Las opciones son `deleteOne` o `deleteMany`.
-* No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación de borrado con éxito igualmente darle una respuesta informativa al usuario.
+* No se hace un `try` y `catch` para asegurarse de que en caso de no poder realizar la operación de borrado con éxito igualmente darle una respuesta informativa al usuario.
 * Falta agregar `/:id` al final de la ruta para leer el id del post a eliminar
 
 ## Get by Id endpoint
-* No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación con éxito igualmente darle una respuesta informativa al usuario.
+No se hace un `try` y `catch` para asegurarse de que en caso de no poder realizar la operación con éxito igualmente darle una respuesta informativa al usuario.
 
 ## "/update" endpoint
 * Como convención se utiliza el método `PUT` y no `POST` a la hora de actualizar una entidad. Realizando este cambio se puede sacar `/update` de la ruta ya que ya se sobre entiende gracias al método.
-* No se hace un `try` y `catch` para asegurarse de en caso de no poder realizar la operación de actualización con éxito igualmente darle una respuesta informativa al usuario.
+* No se hace un `try` y `catch` para asegurarse de que en caso de no poder realizar la operación de actualización con éxito igualmente darle una respuesta informativa al usuario.
 * La función `update` en el objeto `Post` no existe. Las opciones son `updateOne` o `updateMany`.
 
 ## EsLint
-* El Proyecto no contaba con ningún linter para aplicar estilo al código y formatearlo automáticamente. Esto crea una base de código coherente y más legible.
+El Proyecto no contaba con ningún linter para aplicar estilo al código y formatearlo automáticamente. Esto crea una base de código coherente y más legible.
 ## Desacoplar base de datos
-* La base de datos se puede desacoplar de la lógica de la api express y ser llevada a su propio modulo de manera de separar responsabilidades, mantener un código mas cohesivo y hacerlo testeable por capas.
-
+La base de datos se puede desacoplar de la lógica de la api express y ser llevada a su propio modulo de manera de separar responsabilidades, mantener un código mas cohesivo y hacerlo testeable por capas.
+## Tests
+Se agregaron tests unitarios tanto para la capa de Express (capa en la que se encuentran los endpoints) como para la capa de Mongoose. Estos test aíslan cada capa testeando que cada función se comporte como se espera en cada caso posible. Un paso mas profundo es realizar tests de integración probando el comportamiento de ambas capas en conjunto.
 ## GitHub Actions
-* El proyecto tiene un workflow llamado `lint_and_test` que, en cualquier push a cualquier rama, ejecuta el linter y corre los tests. Esto es vital en un proceso de integración continua donde se puede introducir un bug en cualquier commit. Posibilita saber exactamente que commit es el responsable de introducir el bug que rompe los tests y asi poder solucionarlo rápidamente.
+El proyecto tiene un workflow llamado `lint_and_test` que, en cualquier push a cualquier rama, ejecuta el linter y corre los tests. Esto es vital en un proceso de integración continua donde se puede introducir un bug en cualquier commit. También, permite saber exactamente que commit es el responsable de introducir el bug que rompe los tests y asi poder solucionarlo rápidamente.
 
 ## Log de errores (cambio no implementado)
-* En este momento los errores que da la API no se logean en ningún lado pero lo ideal es tener un sistema de logeo asíncrono en un servicio como NewRelic de manera de tener mayor visibilidad sobre lo que sucede con la API en todo momento.
+En este momento los errores que da la API no se logean en ningún lado pero lo ideal es tener un sistema de logeo asíncrono en un servicio como NewRelic de manera de tener mayor visibilidad sobre lo que sucede con la API en todo momento.
