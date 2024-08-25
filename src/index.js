@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { PostRepository, connectToDB } = require('./database/database');
+const { connectToDB } = require('./database/database');
+const { PostRepository } = require('./database/postRepository');
 dotenv.config();
 
 async function createExpressApp(postRepository) {
