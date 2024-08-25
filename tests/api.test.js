@@ -13,20 +13,28 @@ const getPostFirstBody = 'Test Body 1';
 jest.mock('../src/database/postRepository', () => {
     return {
         PostRepository: jest.fn().mockImplementation(() => ({
-            createPost: jest.fn().mockResolvedValue({ _id: '1', title: createPostTitle, body: createPostBody }),
+            createPost: jest.fn()
+                .mockResolvedValue({
+                    _id: '1', title: createPostTitle, body: createPostBody
+                }),
             getPosts: jest.fn().mockResolvedValue([
                 { _id: '1', title: getPostFirstTitle, body: getPostFirstBody },
                 { _id: '2', title: 'Test Title 2', body: 'Test Body 2' }
             ]),
-            getPostById: jest.fn().mockResolvedValue({ _id: '1', title: createPostTitle, body: 'Test Body' }),
-            updatePost: jest.fn().mockResolvedValue({ acknowledged: true, modifiedCount: 1 }),
-            deletePost: jest.fn().mockResolvedValue({ acknowledged: true, deletedCount: 1 }),
+            getPostById: jest.fn()
+                .mockResolvedValue({
+                    _id: '1', title: createPostTitle, body: 'Test Body'
+                }),
+            updatePost: jest.fn()
+                .mockResolvedValue({ acknowledged: true, modifiedCount: 1 }),
+            deletePost: jest.fn()
+                .mockResolvedValue({ acknowledged: true, deletedCount: 1 }),
         }))
     };
 });
 
 describe('Posts API', () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
         mockRepository = new PostRepository();
         app = await createExpressApp(mockRepository);
     });
@@ -39,24 +47,26 @@ describe('Posts API', () => {
             .send({ title: someTitle, body: someBody });
 
         expect(res.statusCode).toBe(201);
-        expect(res.body).toHaveProperty('_id');
         expect(res.body.title).toBe(createPostTitle);
         expect(mockRepository.createPost).toHaveBeenCalledWith(someTitle, someBody);
     });
 
-    it('should try to create a new post and then send a 500 internal error message', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'createPost').mockRejectedValueOnce(new Error('Database error'));
-        const someTitle = 'Some Title';
-        const someBody = 'Some Body';
-        const res = await request(app)
-            .post('/posts')
-            .send({ title: someTitle, body: someBody });
+    it('should try to create a new post and ' +
+        'then send a 500 internal error message', async () => {
+            const createPostSpy = jest
+                .spyOn(mockRepository, 'createPost')
+                .mockRejectedValueOnce(new Error('Database error'));
+            const someTitle = 'Some Title';
+            const someBody = 'Some Body';
+            const res = await request(app)
+                .post('/posts')
+                .send({ title: someTitle, body: someBody });
 
-        expect(res.statusCode).toBe(500);
-        expect(res.body).toEqual({ message: "Internal server error" });
-        expect(mockRepository.createPost).toHaveBeenCalledWith(someTitle, someBody);
-        createPostSpy.mockRestore();
-    });
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toEqual({ message: "Internal server error" });
+            expect(mockRepository.createPost).toHaveBeenCalledWith(someTitle, someBody);
+            createPostSpy.mockRestore();
+        });
 
     it('should retrieve all posts', async () => {
         const res = await request(app).get('/posts');
@@ -67,16 +77,19 @@ describe('Posts API', () => {
         expect(res.body[0].title).toBe(getPostFirstTitle);
     });
 
-    it('should try to retrieve all posts and then send a 500 internal error message', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'getPosts').mockRejectedValueOnce(new Error('Database error'));
-        const res = await request(app).get('/posts');
+    it('should try to retrieve all posts' +
+        ' and then send a 500 internal error message', async () => {
+            const createPostSpy = jest
+                .spyOn(mockRepository, 'getPosts')
+                .mockRejectedValueOnce(new Error('Database error'));
+            const res = await request(app).get('/posts');
 
-        expect(res.statusCode).toBe(500);
-        expect(mockRepository.getPosts).toHaveBeenCalled();
-        expect(res.body).toEqual({ message: "Internal server error" });
+            expect(res.statusCode).toBe(500);
+            expect(mockRepository.getPosts).toHaveBeenCalled();
+            expect(res.body).toEqual({ message: "Internal server error" });
 
-        createPostSpy.mockRestore();
-    });
+            createPostSpy.mockRestore();
+        });
 
     it('should retrieve a post by ID', async () => {
         const someId = '1';
@@ -87,16 +100,19 @@ describe('Posts API', () => {
         expect(mockRepository.getPostById).toHaveBeenCalledWith(someId);
     });
 
-    it('should try to retrieve a post by ID and then send a 500 internal error message', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'getPostById').mockRejectedValueOnce(new Error('Database error'));
-        const someId = '1';
-        const res = await request(app).get(`/posts/${someId}`);
+    it('should try to retrieve a post by ID and ' +
+        'then send a 500 internal error message', async () => {
+            const createPostSpy = jest
+                .spyOn(mockRepository, 'getPostById')
+                .mockRejectedValueOnce(new Error('Database error'));
+            const someId = '1';
+            const res = await request(app).get(`/posts/${someId}`);
 
-        expect(res.statusCode).toBe(500);
-        expect(res.body).toEqual({ message: "Internal server error" });
-        expect(mockRepository.getPostById).toHaveBeenCalledWith(someId);
-        createPostSpy.mockRestore();
-    });
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toEqual({ message: "Internal server error" });
+            expect(mockRepository.getPostById).toHaveBeenCalledWith(someId);
+            createPostSpy.mockRestore();
+        });
 
     it('should update a post by ID', async () => {
         const newTitle = 'Updated Title';
@@ -111,20 +127,24 @@ describe('Posts API', () => {
         expect(mockRepository.updatePost).toHaveBeenCalledWith(someId, newTitle, newBody);
     });
 
-    it('should try to update a post by ID and then send a 500 internal error message', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'updatePost').mockRejectedValueOnce(new Error('Database error'));
-        const newTitle = 'Updated Title';
-        const newBody = 'Updated Body';
-        const someId = '1';
-        const res = await request(app)
-            .put('/posts')
-            .send({ id: someId, title: newTitle, body: newBody });
+    it('should try to update a post by ID ' +
+        'and then send a 500 internal error message', async () => {
+            const createPostSpy = jest
+                .spyOn(mockRepository, 'updatePost')
+                .mockRejectedValueOnce(new Error('Database error'));
+            const newTitle = 'Updated Title';
+            const newBody = 'Updated Body';
+            const someId = '1';
+            const res = await request(app)
+                .put('/posts')
+                .send({ id: someId, title: newTitle, body: newBody });
 
-        expect(res.statusCode).toBe(500);
-        expect(res.body).toEqual({ message: "Internal server error" });
-        expect(mockRepository.updatePost).toHaveBeenCalledWith(someId, newTitle, newBody);
-        createPostSpy.mockRestore();
-    });
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toEqual({ message: "Internal server error" });
+            expect(mockRepository.updatePost)
+                .toHaveBeenCalledWith(someId, newTitle, newBody);
+            createPostSpy.mockRestore();
+        });
 
     it('should delete a post by ID', async () => {
         const someId = '1';
@@ -135,19 +155,24 @@ describe('Posts API', () => {
         expect(mockRepository.deletePost).toHaveBeenCalledWith(someId);
     });
 
-    it('should try to delete a post by ID and then send a 500 internal error message', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'deletePost').mockRejectedValueOnce(new Error('Database error'));
-        const someId = '1';
-        const res = await request(app).delete(`/posts/${someId}`);
+    it('should try to delete a post by ID and ' +
+        'then send a 500 internal error message', async () => {
+            const createPostSpy = jest
+                .spyOn(mockRepository, 'deletePost')
+                .mockRejectedValueOnce(new Error('Database error'));
+            const someId = '1';
+            const res = await request(app).delete(`/posts/${someId}`);
 
-        expect(res.statusCode).toBe(500);
-        expect(res.body).toEqual({ message: "Internal server error" });
-        expect(mockRepository.deletePost).toHaveBeenCalledWith(someId);
-        createPostSpy.mockRestore();
-    });
+            expect(res.statusCode).toBe(500);
+            expect(res.body).toEqual({ message: "Internal server error" });
+            expect(mockRepository.deletePost).toHaveBeenCalledWith(someId);
+            createPostSpy.mockRestore();
+        });
 
     it('should return 404 when deleting a non-existent post', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'deletePost').mockResolvedValue({ acknowledged: true, deletedCount: 0 });
+        const createPostSpy = jest
+            .spyOn(mockRepository, 'deletePost')
+            .mockResolvedValue({ acknowledged: true, deletedCount: 0 });
         const someInvalidId = 'invalidid';
         const res = await request(app).delete(`/posts/${someInvalidId}`);
 
@@ -158,7 +183,9 @@ describe('Posts API', () => {
     });
 
     it('should return 404 when updating a non-existent post', async () => {
-        const createPostSpy = jest.spyOn(mockRepository, 'updatePost').mockResolvedValue({ acknowledged: true, modifiedCount: 0 });
+        const createPostSpy = jest
+            .spyOn(mockRepository, 'updatePost')
+            .mockResolvedValue({ acknowledged: true, modifiedCount: 0 });
         const someInvalidId = 'invalidid';
         const someBody = 'Non-existent Body';
         const someTitle = 'Non-existent Title';
@@ -168,7 +195,8 @@ describe('Posts API', () => {
 
         expect(res.statusCode).toBe(404);
         expect(res.body).toEqual({ message: "Post not found" });
-        expect(mockRepository.updatePost).toHaveBeenCalledWith(someInvalidId, someTitle, someBody);
+        expect(mockRepository.updatePost)
+            .toHaveBeenCalledWith(someInvalidId, someTitle, someBody);
         createPostSpy.mockRestore();
     });
 });

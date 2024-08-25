@@ -14,7 +14,7 @@ Estas variables dependen del entorno en el que se corra el código, si dejamos `
 
 
 ## Agrego un archivo `.gitignore`
-Agrego un archivo `.gitignore` para no subir al repositorio ningun archivo o carpeta no deseada como `.env` o `node_modules`.
+Agrego un archivo `.gitignore` para no subir al repositorio ningún archivo o carpeta no deseada como `.env` o `node_modules`.
 
 ## Variable inutilizada
 La variable "PRIVAVE_API_KEY" no se usa en ningún lado por lo tanto puede ser eliminada. 
@@ -46,8 +46,10 @@ La variable `PORT` nunca se define. Primero hay que definirla con `const` para l
 ## EsLint
 * El Proyecto no contaba con ningún linter para aplicar estilo al código y formatearlo automáticamente. Esto crea una base de código coherente y más legible.
 ## Desacoplar base de datos
-* La base de datos se puede desacoplar de la lógica de la api express y ser llevada a su propio modulo de manera de separar responsabilidades y mantener un código mas cohesivo.
+* La base de datos se puede desacoplar de la lógica de la api express y ser llevada a su propio modulo de manera de separar responsabilidades, mantener un código mas cohesivo y hacerlo testeable por capas.
+
+## GitHub Actions
+* El proyecto tiene un workflow llamado `lint_and_test` que, en cualquier push a cualquier rama, ejecuta el linter y corre los tests. Esto es vital en un proceso de integración continua donde se puede introducir un bug en cualquier commit. Posibilita saber exactamente que commit es el responsable de introducir el bug que rompe los tests y asi poder solucionarlo rápidamente.
+
 ## Log de errores (cambio no implementado)
 * En este momento los errores que da la API no se logean en ningún lado pero lo ideal es tener un sistema de logeo asíncrono en un servicio como NewRelic de manera de tener mayor visibilidad sobre lo que sucede con la API en todo momento.
-
-* agregar github actions

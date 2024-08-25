@@ -87,7 +87,8 @@ async function createExpressApp(postRepository) {
             if (newPost.modifiedCount === 0) {
                 return res.status(404).json({ message: "Post not found" });
             } else {
-                return res.status(200).json({ message: "Successfully modified the post" });
+                return res.status(200)
+                    .json({ message: "Successfully modified the post" });
             }
 
         } catch {

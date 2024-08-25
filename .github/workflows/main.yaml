@@ -1,4 +1,4 @@
-name: build_and_lint
+name: lint_and_test
 
 concurrency:
   group: $-$
@@ -10,7 +10,7 @@ on:
       - '*'
 
 jobs:
-  build_and_lint:
+  lint_and_test:
     defaults:
       run:
         working-directory: .
@@ -28,5 +28,5 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Build
-        run: npm run build
+      - name: Test
+        run: npm run test
