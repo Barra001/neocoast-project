@@ -1,14 +1,8 @@
-const mongoose = require('mongoose');
-
-async function connectToDB() {
-    console.log('Connecting to MongoDB...');
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB');
-}
-
-const Post = mongoose.model('Post', { title: String, body: String });
+const { Post } = require('./database');
 
 class PostRepository {
+    constructor() {
+    }
     async createPost(title, body) {
         const newPost = await Post.create({ title, body });
         return newPost;
@@ -37,7 +31,5 @@ class PostRepository {
 
 
 module.exports = {
-    connectToDB,
     PostRepository,
-    Post
 };

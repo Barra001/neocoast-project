@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { PostRepository, connectToDB } = require('./database');
+const { PostRepository, connectToDB } = require('./database/database');
 dotenv.config();
 
 async function createExpressApp(postRepository) {
@@ -30,7 +30,6 @@ async function createExpressApp(postRepository) {
 
             res.status(201).json(newPost);
         } catch {
-
             res.status(500).json({ message: "Internal server error" });
         }
     });
@@ -116,7 +115,9 @@ async function runServer() {
 
 }
 
-runServer();
+if (require.main === module) {
+    runServer();
+}
 
 module.exports = {
     createExpressApp,
